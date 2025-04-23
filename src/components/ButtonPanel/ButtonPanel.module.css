@@ -1,0 +1,15 @@
+.panel{
+    margin: 20px;
+    text-align: center;
+}
+.panel button{
+    padding: 10px;
+}
+.active{
+    background-color: white;
+    color: black;
+}
+.inactive{
+    background-color: black;
+    color: white;
+}
