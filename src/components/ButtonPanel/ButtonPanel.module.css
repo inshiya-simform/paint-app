@@ -1,11 +1,15 @@
 .panel{
     margin: 20px;
     text-align: center;
+    display: flex;
+    gap: 30px;
+    justify-content: center;
 }
 .panel button{
     padding: 10px;
+    border: 1px solid white;
 }
-.active{
+.active, .eraseAllBtn{
     background-color: white;
     color: black;
 }
