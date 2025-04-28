@@ -1,4 +1,7 @@
-div{
+.pickerSection{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
     text-align: center;
 }
 .colorPicker{

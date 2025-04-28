@@ -1,29 +1,20 @@
 import { ChangeEvent } from 'react'
-import styles from './ColorPicker.module.css'
+import ColorPickerInput from './ColorPickerInput/ColorPickerInput'
+import styles from './ColorPickerInput/ColorPicker.module.css'
+import { COLOR } from '../../Constants/Constants'
 
-type InputFunc = (e: ChangeEvent<HTMLInputElement>)=>void
+export type InputFunc = (e: ChangeEvent<HTMLInputElement>,color:number)=>void
 interface ColorPickerProp {
-    color:string,
-    pickColor: InputFunc
+    color1:string,
+    color2:string,
+    pickColor: InputFunc,
 }
-function throttledOnChange (func:InputFunc,delay:number){
-  let isRunning:boolean = false;
-  return function(e:ChangeEvent<HTMLInputElement>){
-    if(!isRunning){
-      isRunning = true
-      func(e)
-      setTimeout(()=>{
-        isRunning = false
-      },delay)
-    }
-  }
-}
-const ColorPicker = ({color,pickColor}:ColorPickerProp) => {
-  const throttled = throttledOnChange(pickColor,50000)
+
+const ColorPicker = ({color1,color2,pickColor}:ColorPickerProp) => {
   return (
-    <div>
-      <p>Color: {color}</p>
-      <input className={styles.colorPicker} value={color} onChange={(e)=>throttled(e)} type='color'/>
+    <div className={styles.pickerSection}>
+      <ColorPickerInput color={color1} pickColor={(e)=>pickColor(e,COLOR.PRIMARY)}/>
+      <ColorPickerInput color={color2} pickColor={(e)=>pickColor(e,COLOR.SECONDARY)}/>
     </div>
   )
 }
