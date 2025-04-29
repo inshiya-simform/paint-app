@@ -21,7 +21,7 @@ interface ColorPickerInputProp {
     type: "primary" | "secondary"
 }
 const ColorPickerInput = ({color,pickColor,type}:ColorPickerInputProp) => {
-    const throttled = useMemo(()=>throttledOnChange(pickColor,5000),[pickColor])
+    const throttled = useMemo(()=>throttledOnChange(pickColor,1000),[pickColor])
   return (
     <div>
       <span>{type} color: </span>
