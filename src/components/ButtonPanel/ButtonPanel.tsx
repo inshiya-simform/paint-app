@@ -1,22 +1,22 @@
+import { Action } from '../../App'
+import { ACTION } from '../../Constants/Constants'
 import styles from './ButtonPanel.module.css'
 
 interface ButtonPanelProp {
-    handleDraw: ()=>void,
-    handleErase: ()=>void,
-    isDraw: boolean,
+    action: Action,
     handleEraseAll: ()=>void,
-    handleFill: ()=>void
+    handleAction: (action:Action)=>void
 }
-const ButtonPanel = ({handleDraw,handleErase,isDraw,handleEraseAll,handleFill}:ButtonPanelProp) => {
+const ButtonPanel = ({action,handleEraseAll,handleAction}:ButtonPanelProp) => {
     
   return (
     <div className={styles.panel}>
         <div>
-            <button className={isDraw ? styles.inactive : styles.active} onClick={handleErase}>Erase</button>
-            <button className={isDraw ? styles.active : styles.inactive} onClick={handleDraw}>Draw</button>
+            <button className={action === "erase" ? styles.active : styles.inactive} onClick={()=>handleAction(ACTION.ERASE)}>Erase</button>
+            <button className={action === "draw" ? styles.active : styles.inactive} onClick={()=>handleAction(ACTION.DRAW)}>Draw</button>
+            <button className={action === "fill" ? styles.active: styles.inactive} onClick={()=>handleAction(ACTION.FILL)}>Fill Canvas</button>
         </div>
         <button className={styles.eraseAllBtn} onClick={handleEraseAll}>Erase All</button>
-        <button className={styles.eraseAllBtn} onClick={handleFill}>Fill Canvas</button>
     </div>
   )
 }
