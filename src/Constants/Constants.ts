@@ -5,3 +5,12 @@ export const COLOR = {
 }
 export const PRIMARY = "primary"
 export const SECONDARY = "secondary"
+export const ACTION = {
+    DRAW: "draw",
+    FILL: "fill",
+    ERASE: "erase",
+}
+export const MOUSE = {
+    LEFT_CLICK: 1,
+    RIGHT_CLICK: 2
+}

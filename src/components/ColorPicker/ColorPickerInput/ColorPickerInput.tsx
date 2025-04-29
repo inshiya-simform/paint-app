@@ -1,5 +1,5 @@
 import styles from './ColorPicker.module.css'
-import { ChangeEvent } from 'react'
+import { ChangeEvent, useMemo } from 'react'
 import { InputFunc } from "../ColorPicker"
 import { COLOR, PRIMARY } from '../../../Constants/Constants';
 
@@ -21,7 +21,7 @@ interface ColorPickerInputProp {
     type: "primary" | "secondary"
 }
 const ColorPickerInput = ({color,pickColor,type}:ColorPickerInputProp) => {
-    const throttled = throttledOnChange(pickColor,50000)
+    const throttled = useMemo(()=>throttledOnChange(pickColor,5000),[pickColor])
   return (
     <div>
       <span>{type} color: </span>
