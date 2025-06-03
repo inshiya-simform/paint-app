@@ -14,3 +14,8 @@ export const MOUSE = {
     LEFT_CLICK: 1,
     RIGHT_CLICK: 2
 }
+export const MIRROR = {
+    VERTICAL: 'vertical',
+    HORIZONTAL: 'horizontal',
+    BOTH: 'both'
+}
