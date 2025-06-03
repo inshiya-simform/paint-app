@@ -1,3 +1,15 @@
-*{
-  background-color: black;
+:root{
+  --bg-light: #CED1FF;
+  --bg-dark: #C3BDFF;
+  --bg-active: #D8E4FF;
+  --bg-inactive:#B9AAFF;
+}
+body,html{
+  background-color: var(--bg-dark);
+  height: 100%;
+}
+.main-container{
+  display: grid;
+  grid-template-columns: minmax(100px,auto) 1fr minmax(100px,auto);
+  height: 100%;
 }

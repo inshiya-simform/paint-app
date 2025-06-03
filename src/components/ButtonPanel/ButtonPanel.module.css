@@ -1,19 +1,19 @@
 .panel{
     margin: 20px;
     text-align: center;
-    display: flex;
-    gap: 30px;
-    justify-content: center;
 }
 .panel button{
     padding: 10px;
     border: 1px solid white;
+    display: block;
+    width: 100%;
 }
 .active, .eraseAllBtn{
-    background-color: white;
-    color: black;
+    background-color: var(--bg-active);
 }
 .inactive{
-    background-color: black;
-    color: white;
+    background-color: var(--bg-inactive);
+}
+.eraseAllBtn{
+    margin-top: 20px;
 }

@@ -1,12 +1,12 @@
 import "./App.css";
-import ButtonPanel from "./components/ButtonPanel/ButtonPanel";
 import Canvas from "./components/Canvas/Canvas";
-import ColorPicker from "./components/ColorPicker/ColorPicker";
-import Header from "./components/Header/Header";
 import { ChangeEvent, useCallback, useState } from "react";
 import { generateCanvasGrid } from "./utils/generateCanvasGrid";
 import { ACTION, COLOR, MOUSE } from "./Constants/Constants";
 import { floodFill } from "./utils/floodFill";
+import Sidebar from "./components/SideBar/Sidebar";
+import { ColorContext } from "./contextStore/ColorsContext";
+import ButtonPanel from "./components/ButtonPanel/ButtonPanel";
 
 export type Action = (typeof ACTION)[keyof typeof ACTION];
 type Mouse = (typeof MOUSE)[keyof typeof MOUSE];
@@ -20,14 +20,14 @@ function App() {
   const [mouseClick, setMouseclick] = useState<MouseCLick>(null);
 
   function handlePaint(
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: React.MouseEvent<HTMLDivElement>,
     rowIndex: number,
     colIndex: number
   ) {
     if (!mouseClick) {
       return;
     }
-    if (e.target instanceof HTMLButtonElement) {
+    if (e.target instanceof HTMLDivElement) {
       if (action === ACTION.DRAW || action === ACTION.FILL) {
         setCanvas((prevCanvas) => {
           const newCanvas = prevCanvas.map((row) => [...row]);
@@ -45,7 +45,7 @@ function App() {
     }
   }
   function handleMouseDown(
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: React.MouseEvent<HTMLDivElement>,
     rowIndex: number,
     colIndex: number
   ) {
@@ -59,19 +59,10 @@ function App() {
   function handleMouseUp() {
     setMouseclick(() => null);
   }
-  // function pickColor(e:ChangeEvent<HTMLInputElement>,color:number){
-  //   console.log("called")
-  //   if (color === COLOR.PRIMARY){
-  //     setColor1(()=> e.target.value)
-  //   }else{
-  //     setColor2(()=> e.target.value)
-  //   }
-  // } //wrap this component in useCallback. dependency color1 color2
   const memoizedPickColor = useCallback(function pickColor(
     e: ChangeEvent<HTMLInputElement>,
     color: number
   ) {
-    console.log("called");
     if (color === COLOR.PRIMARY) {
       setColor1(() => e.target.value);
     } else {
@@ -83,7 +74,7 @@ function App() {
     setCanvas(() => generateCanvasGrid());
   }
   function handleFill(
-    e: React.MouseEvent<HTMLButtonElement>,
+    e: React.MouseEvent<HTMLDivElement>,
     rowIndex: number,
     colIndex: number
   ) {
@@ -117,25 +108,23 @@ function App() {
     }
   }
   return (
-    <>
-      <Header />
+    <div className="main-container">
+      <ColorContext value={{color1:color1,color2:color2,pickColor:memoizedPickColor}}>      
+        <Sidebar>
+          <ButtonPanel
+            action={action}
+            handleEraseAll={handleEraseAll}
+            handleAction={handleAction}
+          />
+        </Sidebar>
+      </ColorContext>
       <Canvas
         canvas={canvas}
         handlePaint={handlePaint}
         handleMouseDown={handleMouseDown}
         handleMouseUp={handleMouseUp}
       />
-      <ColorPicker
-        color1={color1}
-        color2={color2}
-        pickColor={memoizedPickColor}
-      />
-      <ButtonPanel
-        action={action}
-        handleEraseAll={handleEraseAll}
-        handleAction={handleAction}
-      />
-    </>
+    </div>
   );
 }
 

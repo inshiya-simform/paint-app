@@ -1,0 +1,5 @@
+.sidebarContainer{
+    display: flex;
+    background-color: var(--bg-light);
+    height: 100%;
+}

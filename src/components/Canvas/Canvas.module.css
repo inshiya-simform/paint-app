@@ -1,13 +1,12 @@
-.grid{
-    text-align: center;
-}
 button{
     border-radius: 0;
     border: none;
     background-color: white;
 }
-.cell button{
-    height: 20px;
-    width: 30px;
-    margin-top: -2px;
+.cell{
+    display: flex;
+}
+.cell div{
+    height: 7px;
+    width: 15px;
 }

@@ -1,11 +1,24 @@
 .pickerSection{
-    display: flex;
-    gap: 20px;
-    justify-content: center;
     text-align: center;
+    margin:20px;
+    background-color: var(--bg-inactive);
+    height: fit-content;
 }
 .colorPicker{
-    background-color: aliceblue;
+    height: 30px;
+    width: 30px;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 10px;
+}
+
+.colorPicker::-webkit-color-swatch-wrapper {
+    padding: 0; 
+}
+.colorPicker::-webkit-color-swatch {
+    border: none;
 }
 span{
     color: white;
