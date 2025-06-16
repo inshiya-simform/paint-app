@@ -32,10 +32,10 @@ function App() {
   const [canvas, setCanvas] = useState(generateCanvasGrid());
   const [mouseClick, setMouseclick] = useState<MouseCLick>(null);
   const [isMirror, setMirror] = useState<MirrorType>(null);
-  const undoStack = useRef<Array<Undo[]>>([]);
-  const redoStack = useRef<Array<Undo[]>>([]);
+  const undoRedoLL = useRef<Array<Undo[]>>([]);
+  const undoPointer = useRef<number>(0);
+  const redoPointer = useRef<number>(0);
   const coordArray = useRef<Undo[]>([]);
-  const redoCoordArray = useRef<Undo[]>([]);
 
   function updateCanvas(
     color: string,
@@ -63,7 +63,7 @@ function App() {
   ) {
     if (!mouseClick) {
       return;
-    } //limit undo maintain entrre grid
+    }
     if (e.target instanceof HTMLDivElement) {
       if (action === ACTION.DRAW || action === ACTION.FILL) {
         const color = mouseClick === MOUSE.LEFT_CLICK ? color1 : color2;
@@ -74,14 +74,6 @@ function App() {
             color: canvas[rowIndex][colIndex],
           });
         }
-        if (!isPresent(redoCoordArray.current, rowIndex, colIndex)) {
-          redoCoordArray.current.push({
-            x: rowIndex,
-            y: colIndex,
-            color: color,
-          });
-        }
-
         updateCanvas(color, rowIndex, colIndex, isMirror);
       } else {
         updateCanvas("#ffffff", rowIndex, colIndex, isMirror);
@@ -102,10 +94,12 @@ function App() {
   }
   function handleMouseUp() {
     setMouseclick(() => null);
-    undoStack.current.push(coordArray.current);
+    undoRedoLL.current.push(coordArray.current);
+    undoPointer.current += 1;
+    console.log("ll",undoRedoLL);
+    console.log("undo",undoPointer.current)
+    console.log("redo",redoPointer.current)
     coordArray.current = [];
-    redoStack.current.push(redoCoordArray.current);
-    redoCoordArray.current = [];
   }
   const memoizedPickColor = useCallback(function pickColor(
     e: ChangeEvent<HTMLInputElement>,
@@ -162,21 +156,36 @@ function App() {
     let topOfStack;
     switch (operation) {
       case ACTION.UNDO: {
-        topOfStack = undoStack.current.pop();
+        if (undoPointer.current >= 0) {
+          topOfStack = undoRedoLL.current[undoPointer.current-1];
+          redoPointer.current = undoPointer.current;
+          undoPointer.current -= 1;
+          if (topOfStack) {
+            console.log("top",topOfStack)
+            console.log("undo",undoPointer.current)
+            console.log("redo",redoPointer.current)
+            for (const opn of topOfStack) {
+              updateCanvas(opn.color, opn.x, opn.y, null);
+            }
+          }
+        }
         break;
       }
       case ACTION.REDO: {
-        topOfStack = redoStack.current.pop();
+        topOfStack = undoRedoLL.current[redoPointer.current-1];
+        undoPointer.current = redoPointer.current;
+        redoPointer.current += 1;
         if (topOfStack) {
-          undoStack.current.push(topOfStack);
+          console.log("top",topOfStack)
+          console.log("undo",undoPointer.current)
+          console.log("redo",redoPointer.current)
+          for (const opn of topOfStack) {
+            updateCanvas("red", opn.x, opn.y, null);
+          }
         }
       }
     }
-    if (topOfStack) {
-      for (const opn of topOfStack) {
-        updateCanvas(opn.color, opn.x, opn.y, null);
-      }
-    }
+   
   }
   return (
     <div className="main-container">
