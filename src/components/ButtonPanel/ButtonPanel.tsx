@@ -1,18 +1,21 @@
 import { Action, MirrorType } from "../../App";
 import { ACTION, MIRROR } from "../../Constants/Constants";
 import styles from "./ButtonPanel.module.css";
-import Erase from "../../assets/eraser.svg";
-import EraseAll from "../../assets/eraseAll.svg";
-import Pencil from "../../assets/pencil.svg";
-import Fill from "../../assets/fill.svg";
-import Mirror from "../../assets/mirror.svg";
-import HMirror from "../../assets/horizontalMirror.svg";
-import VMirror from "../../assets/verticalMirror.svg";
+import erase from "../../assets/eraser.svg";
+import eraseAll from "../../assets/eraseAll.svg";
+import pencil from "../../assets/pencil.svg";
+import fill from "../../assets/fill.svg";
+import mirrorImg from "../../assets/mirror.svg";
+import hMirror from "../../assets/horizontalMirror.svg";
+import vMirror from "../../assets/verticalMirror.svg";
+import undo from '../../assets/undo.svg';
+import redo from '../../assets/redo.svg';
 
 interface ButtonPanelProp {
   action: Action;
   handleEraseAll: () => void;
   handleAction: (action: Action) => void;
+  handleUndoRedo: (operation:Action)=>void;
   mirror: {
     isMirror: MirrorType;
     handleMirror: (action:MirrorType) => void;
@@ -23,6 +26,7 @@ const ButtonPanel = ({
   handleEraseAll,
   handleAction,
   mirror,
+  handleUndoRedo,
 }: ButtonPanelProp) => {
   return (
     <div className={styles.panel}>
@@ -32,21 +36,21 @@ const ButtonPanel = ({
           title="Eraser"
           onClick={() => handleAction(ACTION.ERASE)}
         >
-          <img src={Erase} alt="eraser" />
+          <img src={erase} alt="eraser" />
         </button>
         <button
           className={action === "draw" ? styles.active : styles.inactive}
           title="Pencil"
           onClick={() => handleAction(ACTION.DRAW)}
         >
-          <img src={Pencil} alt="pencil" />
+          <img src={pencil} alt="pencil" />
         </button>
         <button
           className={action === "fill" ? styles.active : styles.inactive}
           title="Fill"
           onClick={() => handleAction(ACTION.FILL)}
         >
-          <img src={Fill} alt="fill" />
+          <img src={fill} alt="fill" />
         </button>
       </div>
       <button
@@ -54,7 +58,7 @@ const ButtonPanel = ({
         title="Erase All"
         onClick={handleEraseAll}
       >
-        <img src={EraseAll} alt="eraser all" />
+        <img src={eraseAll} alt="eraser all" />
       </button>
       <div>
         <button
@@ -64,7 +68,7 @@ const ButtonPanel = ({
           title="Mirror"
           onClick={()=>mirror.handleMirror(mirror.isMirror ? null : MIRROR.BOTH)}
         >
-          <img src={Mirror} alt="mirror" />
+          <img src={mirrorImg} alt="mirror" />
         </button>
         {mirror.isMirror && (
           <>
@@ -73,17 +77,33 @@ const ButtonPanel = ({
               title="Mirror Horizontally"
               onClick={()=>mirror.handleMirror(MIRROR.HORIZONTAL)}
             >
-              <img src={HMirror} alt="mirror" />
+              <img src={hMirror} alt="mirror" />
             </button>
             <button
               className={mirror.isMirror === MIRROR.VERTICAL ? styles.active : styles.inactive}
               title="Mirror Vertically"
               onClick={()=>mirror.handleMirror(MIRROR.VERTICAL)}
             >
-              <img src={VMirror} alt="mirror" />
+              <img src={vMirror} alt="mirror" />
             </button>
           </>
         )}
+      </div>
+      <div className={styles.eraseAllBtn}>
+        <button
+          className={styles.active}
+          title="Undo"
+          onClick={()=>handleUndoRedo("undo")}
+        >
+          <img src={undo} alt="undo" />
+        </button>
+        <button
+          className={styles.inactive}
+          title="Redo"
+          onClick={()=>handleUndoRedo("redo")}
+        >
+          <img src={redo} alt="redo" />
+        </button>
       </div>
     </div>
   );

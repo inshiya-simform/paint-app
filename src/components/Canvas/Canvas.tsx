@@ -15,7 +15,7 @@ const Canvas = ({canvas,handlePaint,handleMouseUp, handleMouseDown}:CanvasProp) 
         <div className={styles.cell} key={rowIndex}>
         {
             row.map((cell,colIndex)=>(
-                <div key={colIndex} style={{backgroundColor: cell}} onMouseOver={(e)=>handlePaint(e,rowIndex,colIndex)} onContextMenu={(e)=>e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={(e)=>handleMouseDown(e,rowIndex,colIndex)}>{cell ? undefined : undefined}</div>
+                <div key={colIndex} style={{backgroundColor: cell,userSelect:'none'}} onMouseOver={(e)=>handlePaint(e,rowIndex,colIndex)} onContextMenu={(e)=>e.preventDefault()} onMouseUp={handleMouseUp} onMouseDown={(e)=>handleMouseDown(e,rowIndex,colIndex)}>{cell ? undefined : undefined}</div>
             ))
         }
         </div>

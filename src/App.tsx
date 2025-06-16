@@ -1,6 +1,6 @@
 import "./App.css";
 import Canvas from "./components/Canvas/Canvas";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { generateCanvasGrid } from "./utils/generateCanvasGrid";
 import {
   ACTION,
@@ -13,13 +13,18 @@ import { floodFill } from "./utils/floodFill";
 import Sidebar from "./components/SideBar/Sidebar";
 import { ColorContext } from "./contextStore/ColorsContext";
 import ButtonPanel from "./components/ButtonPanel/ButtonPanel";
+import { isPresent } from "./utils/isPresent";
 
 export type Action = (typeof ACTION)[keyof typeof ACTION];
 type Mouse = (typeof MOUSE)[keyof typeof MOUSE];
 type Mirror = (typeof MIRROR)[keyof typeof MIRROR];
 export type MirrorType = Mirror | null;
 type MouseCLick = Mouse | null;
-
+export type Undo = {
+  x: number;
+  y: number;
+  color: string;
+};
 function App() {
   const [color1, setColor1] = useState("#000000");
   const [color2, setColor2] = useState("#000000");
@@ -27,6 +32,10 @@ function App() {
   const [canvas, setCanvas] = useState(generateCanvasGrid());
   const [mouseClick, setMouseclick] = useState<MouseCLick>(null);
   const [isMirror, setMirror] = useState<MirrorType>(null);
+  const undoStack = useRef<Array<Undo[]>>([]);
+  const redoStack = useRef<Array<Undo[]>>([]);
+  const coordArray = useRef<Undo[]>([]);
+  const redoCoordArray = useRef<Undo[]>([]);
 
   function updateCanvas(
     color: string,
@@ -39,11 +48,9 @@ function App() {
       newCanvas[rowIndex][colIndex] = color;
       if (isMirror === MIRROR.HORIZONTAL) {
         newCanvas[rowIndex][CANVAS_SIZE - colIndex] = color;
-      }
-      else if (isMirror === MIRROR.VERTICAL) {
+      } else if (isMirror === MIRROR.VERTICAL) {
         newCanvas[CANVAS_SIZE - rowIndex][colIndex] = color;
-      }
-      else if (isMirror === MIRROR.BOTH) {
+      } else if (isMirror === MIRROR.BOTH) {
         newCanvas[CANVAS_SIZE - rowIndex][CANVAS_SIZE - colIndex] = color;
       }
       return newCanvas;
@@ -56,10 +63,25 @@ function App() {
   ) {
     if (!mouseClick) {
       return;
-    }
+    } //limit undo maintain entrre grid
     if (e.target instanceof HTMLDivElement) {
       if (action === ACTION.DRAW || action === ACTION.FILL) {
         const color = mouseClick === MOUSE.LEFT_CLICK ? color1 : color2;
+        if (!isPresent(coordArray.current, rowIndex, colIndex)) {
+          coordArray.current.push({
+            x: rowIndex,
+            y: colIndex,
+            color: canvas[rowIndex][colIndex],
+          });
+        }
+        if (!isPresent(redoCoordArray.current, rowIndex, colIndex)) {
+          redoCoordArray.current.push({
+            x: rowIndex,
+            y: colIndex,
+            color: color,
+          });
+        }
+
         updateCanvas(color, rowIndex, colIndex, isMirror);
       } else {
         updateCanvas("#ffffff", rowIndex, colIndex, isMirror);
@@ -80,6 +102,10 @@ function App() {
   }
   function handleMouseUp() {
     setMouseclick(() => null);
+    undoStack.current.push(coordArray.current);
+    coordArray.current = [];
+    redoStack.current.push(redoCoordArray.current);
+    redoCoordArray.current = [];
   }
   const memoizedPickColor = useCallback(function pickColor(
     e: ChangeEvent<HTMLInputElement>,
@@ -132,6 +158,26 @@ function App() {
   function handleMirror(action: MirrorType) {
     setMirror(action);
   }
+  function handleUndoRedo(operation: Action) {
+    let topOfStack;
+    switch (operation) {
+      case ACTION.UNDO: {
+        topOfStack = undoStack.current.pop();
+        break;
+      }
+      case ACTION.REDO: {
+        topOfStack = redoStack.current.pop();
+        if (topOfStack) {
+          undoStack.current.push(topOfStack);
+        }
+      }
+    }
+    if (topOfStack) {
+      for (const opn of topOfStack) {
+        updateCanvas(opn.color, opn.x, opn.y, null);
+      }
+    }
+  }
   return (
     <div className="main-container">
       <ColorContext
@@ -142,6 +188,7 @@ function App() {
             action={action}
             handleEraseAll={handleEraseAll}
             handleAction={handleAction}
+            handleUndoRedo={handleUndoRedo}
             mirror={{
               isMirror: isMirror,
               handleMirror: handleMirror,

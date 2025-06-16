@@ -1,4 +1,4 @@
-export const CANVAS_SIZE = 100;
+export const CANVAS_SIZE = 30;
 export const COLOR = {
     PRIMARY: 1,
     SECONDARY: 2
@@ -9,6 +9,8 @@ export const ACTION = {
     DRAW: "draw",
     FILL: "fill",
     ERASE: "erase",
+    UNDO: "undo",
+    REDO: "redo"
 }
 export const MOUSE = {
     LEFT_CLICK: 1,
